@@ -7,7 +7,7 @@ class NetWorkApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'NEt Demo',
+      title: 'NEt1111 Demo',
       theme: ThemeData(
         // This is the theme of your application.
         //
