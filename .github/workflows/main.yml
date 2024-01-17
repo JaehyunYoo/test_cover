@@ -22,9 +22,7 @@ jobs:
       run: flutter test --coverage
 
     - name: Generate Coverage Report Image
-      run: |
-        # 여기에 lcov 데이터를 이미지로 변환하는 스크립트 실행
-        # 예: lcov-to-image-script coverage/lcov.info
+      run:  lcov-to-image-script coverage/lcov.info
 
     - name: Upload Coverage Report Image
       uses: actions/upload-artifact@v2
