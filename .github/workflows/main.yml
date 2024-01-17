@@ -21,19 +21,29 @@ jobs:
     - name: Run Tests
       run: flutter test --coverage
 
-    - name: Generate Coverage Report Image
-      run:  lcov-to-image-script coverage/lcov.info
+    - name: Install Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14' # 필요한 Node.js 버전
 
-    - name: Upload Coverage Report Image
-      uses: actions/upload-artifact@v2
-      with:
-        name: coverage-report-image
-        path: path/to/coverage-report
-    # 이미지를 Pull Request에 표시
-    - name: Post Coverage Image to PR
-      uses: unsplash/comment-on-pr@v1.2.0
+    - name: Parse Coverage Data
+      run: |
+        node parse-coverage.js > coverage.md
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_WORKSPACE: ${{ github.workspace }}
+
+    - name: Post Coverage Report to PR Comment
+      uses: actions/github-script@v3
       with:
-        msg: '![Coverage Report](path/to/coverage-report-image.png)'
-        check_for_duplicate_msg: false
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const path = require('path');
+
+          const coverageComment = fs.readFileSync(path.join(process.env.GITHUB_WORKSPACE, 'coverage.md'), 'utf8');
+          await github.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: coverageComment
+          });
