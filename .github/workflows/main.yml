@@ -1,49 +1,40 @@
-name: Flutter Build and Test
+name: Code Coverage Check
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-and-test:
+  code-coverage:
+    name: Check Code Coverage
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v1
-      with:
-        flutter-version: '3.x' # 프로젝트에 맞는 버전 설정
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
 
-    - name: Install Dependencies
-      run: flutter pub get
+      - name: Install Dependencies
+        run: flutter pub get
 
-    - name: Run Tests
-      run: flutter test --coverage
+      - name: Run Flutter Tests
+        run: flutter test --coverage
 
-    - name: Install Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14' # 필요한 Node.js 버전
+      - name: Setup LCOV
+        uses: hrishikesh-kadam/setup-lcov@v1
 
-    - name: Parse Coverage Data
-      run: |
-        node parse-coverage.js > coverage.md
-      env:
-        GITHUB_WORKSPACE: ${{ github.workspace }}
-
-    - name: Post Coverage Report to PR Comment
-      uses: actions/github-script@v3
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-          const fs = require('fs');
-          const path = require('path');
-
-          const coverageComment = fs.readFileSync(path.join(process.env.GITHUB_WORKSPACE, 'coverage.md'), 'utf8');
-          await github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: coverageComment
-          });
+      - name: Report Code Coverage
+        uses: zgosalvez/github-actions-report-lcov@v3
+        with:
+          coverage-files: coverage/lcov.info
+          minimum-coverage: 95
+          artifact-name: code-coverage-report
+          github-token: ${{ secrets.GITHUB_TOKEN }}
