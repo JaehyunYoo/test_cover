@@ -14,7 +14,7 @@ import 'package:test_app/main.dart';
 void main() {
   testWidgets('End to Screen Test Counter', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const EndToScreen(title: '테스트입니다.'));
+    await tester.pumpWidget(const EndToScreen());
 
     // Verify that our counter starts at 0.s
     expect(find.text('0'), findsOneWidget);
