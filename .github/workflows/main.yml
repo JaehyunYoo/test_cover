@@ -1,6 +1,6 @@
 name: Code Coverage Check
 
-on: [pull_request, push]
+on: pull_request
 
 permissions:
   pull-requests: write
