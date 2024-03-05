@@ -58,6 +58,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   int i = 2;
   var t = 5;
+  var ab = 5;
+  var abc = 5;
+  var abcd = 5;
+  var abcdf = 5;
 
   void _incrementCounter() {
     setState(() {
